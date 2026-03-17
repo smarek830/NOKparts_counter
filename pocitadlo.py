@@ -307,7 +307,7 @@ class PocitadloApp:
         if width < 10: width = 300
         
         palette = COLORS_OK
-        if total_count > LIMIT_VAROVANIA: palette = COLORS_WARN
+        if total_count > LIMITY["warning"]: palette = COLORS_WARN
         if total_count > LIMITY["critical"]: palette = COLORS_CRIT
         
         current_x = 0

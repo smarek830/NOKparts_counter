@@ -547,7 +547,7 @@ class PocitadloApp:
         tot = self.counters[idx].get(); cnt = self.sub_counters[idx]
         w = max(cv.winfo_width(), 300); h = cv.winfo_height()
         pal = COLORS_OK
-        if tot > LIMIT_VAROVANIA: pal = COLORS_WARN
+        if tot > LIMITY["warning"]: pal = COLORS_WARN
         if tot > LIMITY["critical"]: pal = COLORS_CRIT
         cx = 0
         for i in range(3):

@@ -29,8 +29,7 @@ def load_data():
         df = pd.read_csv(
             SUBOR_HISTORIA, 
             delimiter=';',
-            names=["Dátum", "Čas", "PIN", "Meno", "Typ", "Chyba", "Hodnota"],
-            header=0, # Prvý riadok je hlavička
+            header=0,
             encoding='utf-8'
         )
         # Konverzia stĺpca 'Dátum' na dátumový typ
