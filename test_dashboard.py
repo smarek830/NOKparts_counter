@@ -14,6 +14,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import dashboard
 
 
+@pytest.fixture(autouse=True)
+def clear_cache():
+    """
+    Fixture, ktorá pred každým testom vymaže Streamlit cache funkcie load_data,
+    aby výsledky jedného testu neovplyvňovali ďalší.
+    """
+    dashboard.load_data.clear()
+    yield
+
+
 @pytest.fixture
 def mock_streamlit():
     """
@@ -21,8 +31,9 @@ def mock_streamlit():
     bez skutočného spúšťania Streamlit servera.
     """
     mock_st = MagicMock()
-    # Nahradíme reálny streamlit naším mockom v rámci testovaného modulu
-    with patch.dict(sys.modules, {'streamlit': mock_st}):
+    # Nahradíme objekt 'st' priamo v module dashboard, aby volania st.error() a
+    # pod. v tele testovanej funkcie smerovali na náš mock.
+    with patch.object(dashboard, 'st', mock_st):
         yield mock_st
 
 
@@ -54,14 +65,14 @@ def test_load_data_success():
         "2025-12-01;10:15:00;9999;Technológ;RESTART;SYS;0\n"
     )
 
+    # DataFrame vytvoríme PRED aktiváciou mocku, aby pd.read_csv v tomto volání
+    # použil skutočný pandas a nie mock.
+    from io import StringIO
+    df = pd.read_csv(StringIO(csv_data), delimiter=';')
+
     # Mockujeme funkcie pre prácu so súborovým systémom
     with patch('os.path.exists', return_value=True):
-        with patch('pandas.read_csv') as mock_read_csv:
-            # Vytvoríme DataFrame, aký by vrátil pandas po načítaní našich dát
-            from io import StringIO
-            df = pd.read_csv(StringIO(csv_data), delimiter=';')
-            mock_read_csv.return_value = df
-
+        with patch('pandas.read_csv', return_value=df):
             # Spustíme testovanú funkciu
             result_df = dashboard.load_data()
 
