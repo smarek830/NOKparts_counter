@@ -1,0 +1,83 @@
+{
+    "timestamp": "2026-01-29T10:57:10.215402",
+    "shift_id": "2026-01-29_Ranna",
+    "user_name": "Lukáš BENDÍK",
+    "user_pin": "1111",
+    "counters": [
+        3,
+        0,
+        2,
+        1,
+        1,
+        0,
+        0
+    ],
+    "sub_counters": [
+        [
+            2,
+            1,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            1,
+            1,
+            0
+        ],
+        [
+            1,
+            0,
+            0
+        ],
+        [
+            1,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ]
+    ],
+    "row_history": [
+        [
+            1,
+            0,
+            0
+        ],
+        [],
+        [
+            1,
+            0
+        ],
+        [
+            0
+        ],
+        [
+            0
+        ],
+        [],
+        []
+    ],
+    "stats": {
+        "Štefan PIVOVAR": {
+            "BX726 Lateral (NEDOPENENÁ)": 0
+        },
+        "Technológ": {
+            "BX726 Lateral (PRESTRIEKANÁ)": 1,
+            "BX726 Central (PRESTRIEKANÁ)": 1,
+            "BX726 Lateral (NEDOPENENÁ)": 1,
+            "BX726 Central (NEDOPENENÁ)": 1
+        }
+    }
+}
