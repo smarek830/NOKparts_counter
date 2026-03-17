@@ -1,0 +1,147 @@
+import tkinter as tk
+from tkinter import messagebox
+import datetime
+import csv
+import os
+
+# --- NASTAVENIA ---
+SUBOR_HISTORIA = "historia_nepodarkov.csv"
+LIMITY = {
+    "warning": 10,  # Oranžová farba
+    "critical": 25  # Červená farba
+}
+CAS_RESETU = ["06:00", "14:00", "22:00"]
+POCET_RIADKOV = 15
+
+class PocitadloApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Počítadlo Nepodarkov")
+        
+        # Fullscreen nastavenie
+        self.root.attributes('-fullscreen', True)
+        self.root.bind("<Escape>", self.ukoncit_fullscreen) # ESC pre vypnutie
+        
+        # Premenné pre počítadlá
+        self.counters = [tk.IntVar(value=0) for _ in range(POCET_RIADKOV)]
+        self.labels = [] # Pre ukladanie odkazov na labeli kvôli farbe
+        
+        # Vytvorenie hlavičky CSV ak neexistuje
+        self.skontroluj_csv()
+
+        # Vytvorenie UI
+        self.vytvor_rozhranie()
+        
+        # Spustenie časovača pre automatický reset
+        self.check_time()
+
+    def skontroluj_csv(self):
+        """Vytvorí súbor pre históriu s hlavičkou, ak neexistuje."""
+        if not os.path.exists(SUBOR_HISTORIA):
+            with open(SUBOR_HISTORIA, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file, delimiter=';')
+                writer.writerow(["Dátum", "Čas", "Typ Udalosti", "Riadok", "Hodnota"])
+
+    def zapis_do_historie(self, typ_udalosti, riadok, hodnota):
+        """Zapíše udalosť do CSV súboru."""
+        teraz = datetime.datetime.now()
+        datum = teraz.strftime("%Y-%m-%d")
+        cas = teraz.strftime("%H:%M:%S")
+        
+        try:
+            with open(SUBOR_HISTORIA, mode='a', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file, delimiter=';')
+                writer.writerow([datum, cas, typ_udalosti, riadok, hodnota])
+        except Exception as e:
+            print(f"Chyba pri zápise: {e}")
+
+    def aktualizuj_farbu(self, index, hodnota):
+        """Zmení farbu pozadia čísla podľa hodnoty."""
+        label = self.labels[index]
+        if hodnota > LIMITY["critical"]:
+            label.config(bg="red", fg="white")
+        elif hodnota > LIMITY["warning"]:
+            label.config(bg="orange", fg="black")
+        else:
+            label.config(bg="#f0f0f0", fg="black") # Štandardná farba
+
+    def pridat_nepodarok(self, index):
+        """Zvýši počítadlo a aktualizuje UI."""
+        nova_hodnota = self.counters[index].get() + 1
+        self.counters[index].set(nova_hodnota)
+        self.aktualizuj_farbu(index, nova_hodnota)
+        
+        # Zápis do databázy
+        self.zapis_do_historie("PRIDANÉ", f"Riadok {index + 1}", nova_hodnota)
+
+    def reset_vsetko(self, automaticky=False):
+        """Vynuluje všetky počítadlá."""
+        for i in range(POCET_RIADKOV):
+            stara_hodnota = self.counters[i].get()
+            if stara_hodnota > 0: # Zapíšeme len ak tam niečo bolo
+                self.zapis_do_historie("RESET_SAVE", f"Riadok {i + 1}", stara_hodnota)
+            
+            self.counters[i].set(0)
+            self.aktualizuj_farbu(i, 0)
+        
+        dovod = "AUTOMATICKÝ RESET" if automaticky else "MANUÁLNY RESET"
+        self.zapis_do_historie(dovod, "Všetky", 0)
+
+    def check_time(self):
+        """Kontroluje čas každú sekundu pre automatický reset."""
+        teraz = datetime.datetime.now().strftime("%H:%M:%S")
+        
+        # Pridáme sekundy :00, aby sa to spustilo presne
+        casy_s_sekundami = [t + ":00" for t in CAS_RESETU]
+        
+        if teraz in casy_s_sekundami:
+            self.reset_vsetko(automaticky=True)
+        
+        # Opakuj kontrolu každých 1000ms (1 sekunda)
+        self.root.after(1000, self.check_time)
+
+    def ukoncit_fullscreen(self, event=None):
+        self.root.attributes('-fullscreen', False)
+        # Prípadne self.root.destroy() pre úplne vypnutie
+
+    def vytvor_rozhranie(self):
+        """Vykreslí tlačidlá a polia."""
+        # Hlavný kontajner
+        main_frame = tk.Frame(self.root)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+        # Konfigurácia gridu (mriežky)
+        main_frame.columnconfigure(0, weight=1) # Stĺpec pre ID
+        main_frame.columnconfigure(1, weight=3) # Stĺpec pre Tlačidlo
+        main_frame.columnconfigure(2, weight=4) # Stĺpec pre Displej
+        
+        for i in range(POCET_RIADKOV):
+            main_frame.rowconfigure(i, weight=1) # Aby sa riadky roztiahli
+            
+            # 1. Popis riadka (číslo)
+            lbl_id = tk.Label(main_frame, text=f"{i+1}.", font=("Arial", 14, "bold"))
+            lbl_id.grid(row=i, column=0, sticky="nsew")
+
+            # 2. Tlačidlo (Button) - veľké pre dotyk
+            btn = tk.Button(main_frame, text="PRIDAŤ NEPODAROK", 
+                            font=("Arial", 12, "bold"), bg="#dddddd",
+                            command=lambda idx=i: self.pridat_nepodarok(idx))
+            btn.grid(row=i, column=1, sticky="nsew", padx=5, pady=2)
+
+            # 3. Zobrazenie čísla (Label)
+            lbl_count = tk.Label(main_frame, textvariable=self.counters[i], 
+                                 font=("Arial", 20, "bold"), borderwidth=2, relief="groove")
+            lbl_count.grid(row=i, column=2, sticky="nsew", padx=5, pady=2)
+            
+            self.labels.append(lbl_count)
+
+        # Tlačidlo pre manuálny reset (napr. dole alebo skryté, tu ho dáme na spodok)
+        # Môžeš odkomentovať ak chceš tlačidlo na reset na obrazovke
+        # btn_reset = tk.Button(self.root, text="MANUÁLNY RESET", command=self.reset_vsetko, bg="red", fg="white")
+        # btn_reset.pack(side=tk.BOTTOM, fill=tk.X)
+
+# --- SPUSTENIE ---
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PocitadloApp(root)
+    root.mainloop()

@@ -1,0 +1,95 @@
+{
+    "timestamp": "2026-01-26T15:20:48.269529",
+    "shift_id": "2026-01-26_Poobedna",
+    "user_name": "Miroslav GALLIK",
+    "user_pin": "2222",
+    "counters": [
+        2,
+        3,
+        2,
+        2,
+        1,
+        0,
+        2,
+        0
+    ],
+    "sub_counters": [
+        [
+            1,
+            1,
+            0
+        ],
+        [
+            3,
+            0,
+            0
+        ],
+        [
+            2,
+            0,
+            0
+        ],
+        [
+            2,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            1
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            1,
+            1,
+            0
+        ],
+        [
+            0,
+            0,
+            0
+        ]
+    ],
+    "row_history": [
+        [
+            0,
+            1
+        ],
+        [
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0
+        ],
+        [
+            0,
+            0
+        ],
+        [
+            2
+        ],
+        [],
+        [
+            0,
+            1
+        ],
+        []
+    ],
+    "stats": {
+        "Lukáš BENDÍK": {
+            "BX726 Lateral (NEDOPENENÁ)": 1,
+            "BX726 Front (NEDOPENENÁ)": 3,
+            "M7 (NEDOPENENÁ)": 2,
+            "BX726 Central (NEDOPENENÁ)": 1,
+            "VW380 LAT (ROZTRHNUTÁ)": 1
+        }
+    }
+}

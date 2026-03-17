@@ -1,0 +1,15 @@
+Exception has occurred: AttributeError
+'PocitadloApp' object has no attribute 'aktualizuj_tlacidlo_spat'
+  File "C:\Users\Admin\Desktop\Program počítadlo\Nový textový dokument.py", line 122, in __init__
+    self.aktualizuj_tlacidlo_spat(i)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\Desktop\Program počítadlo\Nový textový dokument.py", line 567, in <module>
+    app = PocitadloApp(root)
+AttributeError: 'PocitadloApp' object has no attribute 'aktualizuj_tlacidlo_spat'
+
+
+219 INFO: PyInstaller: 6.17.0, contrib hooks: 2025.10
+220 INFO: Python: 3.14.0
+252 INFO: Platform: Windows-10-10.0.19045-SP0
+252 INFO: Python environment: C:\Users\Admin\AppData\Local\Programs\Python\Python314
+ERROR: Script file 'v22.py' does not exist.
